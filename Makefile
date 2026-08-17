@@ -1,5 +1,5 @@
-# Makefile - HP Sound Quirk (All-in-One)
-# This will: copy source files, patch alc269.c, build the module
+# Makefile - HP Sound Quirk (Minimal)
+# Builds only the modified alc269.c as the Realtek HDA module
 
 obj-m += snd-hda-codec-realtek.o
 
@@ -7,25 +7,16 @@ KERNELRELEASE := $(shell uname -r)
 KDIR := /lib/modules/$(KERNELRELEASE)/build
 PWD := $(shell pwd)
 
-# Include all .c files
-snd-hda-codec-realtek-y := $(patsubst %.c,%.o,$(wildcard *.c))
-
-# 1. Copy all source files from kernel
-$(shell cp /usr/src/linux-headers-$(KERNELRELEASE)/sound/pci/hda/*.c . 2>/dev/null)
-$(shell cp /usr/src/linux-headers-$(KERNELRELEASE)/sound/pci/hda/*.h . 2>/dev/null)
-$(shell cp /usr/src/linux-headers-$(KERNELRELEASE)/sound/hda/*.c . 2>/dev/null)
-$(shell cp /usr/src/linux-headers-$(KERNELRELEASE)/sound/hda/*.h . 2>/dev/null)
-
-# 2. Download patched alc269.c from GitHub (overwrites the original)
-$(shell wget -q -O alc269.c https://raw.githubusercontent.com/herenturker/hp-sound-quirk/main/alc269.c 2>/dev/null)
+# Explicitly set the object file from our source
+snd-hda-codec-realtek-objs := alc269.o
 
 all:
 	@echo "=========================================="
-	@echo "HP Sound Quirk - All-in-One Builder"
+	@echo "HP Sound Quirk Builder"
 	@echo "Kernel: $(KERNELRELEASE)"
 	@echo "=========================================="
 	@echo ""
-	@echo "[1/4] Checking kernel headers..."
+	@echo "[1/3] Checking kernel headers..."
 	@if [ ! -d "$(KDIR)" ]; then \
 		echo "ERROR: Kernel headers not found!"; \
 		echo "Run: sudo apt install linux-headers-$(KERNELRELEASE)"; \
@@ -33,18 +24,12 @@ all:
 	fi
 	@echo "OK"
 	@echo ""
-	@echo "[2/4] Copying source files from kernel..."
-	@cp /usr/src/linux-headers-$(KERNELRELEASE)/sound/pci/hda/*.c . 2>/dev/null || true
+	@echo "[2/3] Copying required headers from kernel..."
 	@cp /usr/src/linux-headers-$(KERNELRELEASE)/sound/pci/hda/*.h . 2>/dev/null || true
-	@cp /usr/src/linux-headers-$(KERNELRELEASE)/sound/hda/*.c . 2>/dev/null || true
 	@cp /usr/src/linux-headers-$(KERNELRELEASE)/sound/hda/*.h . 2>/dev/null || true
 	@echo "OK"
 	@echo ""
-	@echo "[3/4] Downloading patched alc269.c from GitHub..."
-	@wget -q -O alc269.c https://raw.githubusercontent.com/herenturker/hp-sound-quirk/main/alc269.c 2>/dev/null || echo "WARNING: Could not download, using existing file"
-	@echo "OK"
-	@echo ""
-	@echo "[4/4] Building module..."
+	@echo "[3/3] Building module..."
 	@make -C $(KDIR) M=$(PWD) modules
 	@echo ""
 	@echo "=========================================="
@@ -59,7 +44,7 @@ all:
 clean:
 	@echo "Cleaning..."
 	@make -C $(KDIR) M=$(PWD) clean 2>/dev/null || true
-	@rm -f *.o *.ko *.mod.c *.mod *.order *.symvers
+	@rm -f *.o *.ko *.mod.c *.mod *.order *.symvers *.h
 	@echo "Clean complete."
 
 install:
