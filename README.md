@@ -19,7 +19,7 @@ You need to download the Linux kernel from official resources and replace the ``
 
 The change added is:
 ``` c
-SND_PCI_QUIRK(0x103c, 0x8bb6, "HP Laptop 15-fd0039nt", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_GPIO);
+SND_PCI_QUIRK(0x103c, 0x8bb6, "HP Laptop 15-fd0039nt", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_GPIO),
 ```
 
 ## License
