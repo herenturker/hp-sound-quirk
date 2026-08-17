@@ -64,7 +64,7 @@ clean:
 
 install:
 	@echo "Loading module..."
-	@sud o modprobe -r snd_hda_codec_realtek 2>/dev/null || true
+	@sudo modprobe -r snd_hda_codec_realtek 2>/dev/null || true
 	@sudo insmod snd-hda-codec-realtek.ko
 	@if [ $$? -eq 0 ]; then \
 		echo "Module loaded successfully!"; \
