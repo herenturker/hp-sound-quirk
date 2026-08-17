@@ -15,62 +15,12 @@ This module applies the ALC236_FIXUP_HP_MUTE_LED_MICMUTE_GPIO fixup, which:
 
 The quirk is applied using the device's Subsystem ID (0x103c:0x8bb6).
 
-## Building and Testing
+You need to download the Linux kernel from official resources and replace the ```alc269.c``` file in ```/sound/hda/codecs/realtek```.
 
-### Prerequisites
-
-You need the kernel headers for your current kernel:
-
-Debian/Ubuntu:
-``` bash
-sudo apt update
-sudo apt install linux-headers-$(uname -r) build-essential
-```
-Fedora/RHEL:
-``` bash
-sudo dnf install kernel-devel-$(uname -r) gcc make
-```
-### Clone and Build
-``` bash
-git clone https://github.com/herenturker/hp-sound-quirk.git
-cd hp-sound-quirk
-make
+The change added is:
+``` c
+SND_PCI_QUIRK(0x103c, 0x8bb6, "HP Laptop 15-fd0039nt", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_GPIO);
 ```
 
-## Load and Test
-
-### Remove the existing module
-``` bash
-sudo modprobe -r snd_hda_codec_realtek
-```
-
-### Load your custom module
-``` bash
-sudo insmod snd-hda-codec-realtek.ko
-```
-
-### Check kernel logs
-``` bash
-dmesg | tail -20
-```
-You should see a log entry confirming the quirk is applied:
-``` bash
-hda_codec_realtek: quirk applied for HP Laptop 15-fd0039nt (SSID: 103c:8bb6)
-```
-Now press the mute and mic-mute keys on your keyboard and verify the LEDs work correctly.
-
-### Unload
-
-``` bash
-sudo rmmod snd_hda_codec_realtek
-```
-
-### Automated Test Script
-
-Run the included test script to automate the process:
-``` bash
-chmod +x test.sh
-./test.sh
-```
 ## License
 GPL v2 (same as the Linux kernel).
