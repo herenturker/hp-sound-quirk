@@ -1,26 +1,51 @@
+# ALC236 Mic-Mute LED Patch for HP Laptop 15-fd0039nt
 
-# HP Sound Quirk for HP Laptop 15-fd0039nt
+This repository provides an out-of-tree Linux kernel module patch that fixes the microphone mute LED functionality on the HP Laptop 15-fd0039nt (and potentially other 15-fd0xxx models) using the Realtek ALC236 audio codec.
 
-This repository provides an out-of-tree kernel module to fix the mute LED and mic-mute LED functionality on the HP Laptop 15-fd0039nt (and other 15-fd0xxx models) with the Realtek ALC236 audio codec.
+## Overview
 
-## The Problem
+On HP Laptop 15-fd0xxx series laptops running Linux, the microphone mute LED does not toggle correctly by default due to a missing subsystem quirk entry in the kernel's Realtek driver.
 
-The HP Laptop 15-fd0xxx series has an issue where the speaker mute and microphone mute LEDs do not work correctly under Linux. The existing quirk (ALC236_FIXUP_HP_MUTE_LED_COEFBIT2) only enables the speaker mute LED but does not handle the mic-mute LED.
+This patch adds a dedicated fixup (```ALC236_FIXUP_HP_MICMUTE_LED_ONLY```) targeting Subsystem ID 103c:8bb6. It routes the mic-mute LED control through GPIO 0 with active-low polarity.
 
-## The Solution
+## Patch Details
 
-This module applies the ALC236_FIXUP_HP_MUTE_LED_MICMUTE_GPIO fixup, which:
-- Enables the speaker mute LED
-- Enables the microphone mute LED via GPIO bit 0
-
-The quirk is applied using the device's Subsystem ID (0x103c:0x8bb6).
-
-You need to download the Linux kernel from official resources and replace the ```alc269.c``` file in ```/sound/hda/codecs/realtek```.
-
-The change added is:
+* Target File: sound/pci/hda/patch_realtek.c
+* Subsystem ID (SSID): 103c:8bb6
+* Fixup Added: ALC236_FIXUP_HP_MICMUTE_LED_ONLY
+* Codes added (in random placement):
 ``` c
-SND_PCI_QUIRK(0x103c, 0x8bb6, "HP Laptop 15-fd0039nt", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_GPIO),
+static void alc236_fixup_hp_micmute_led_only(struct hda_codec *codec,
+					       const struct hda_fixup *fix, int action)
+{
+	struct alc_spec *spec = codec->spec;
+
+	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
+		/* Micmute LED = GPIO 0 */
+		spec->micmute_led_polarity = 1;
+	}
+	alc_fixup_hp_gpio_led(codec, action, 0x00, 0x01);
+}
+```
+``` c
+ALC236_FIXUP_HP_MICMUTE_LED_ONLY,
+```
+``` c
+[ALC236_FIXUP_HP_MICMUTE_LED_ONLY] = {
+	.type = HDA_FIXUP_FUNC,
+	.v.func = alc236_fixup_hp_micmute_led_only,
+},
+```
+``` c
+SND_PCI_QUIRK(0x103c, 0x8bb6, "HP Laptop 15-fd0039nt", ALC236_FIXUP_HP_MICMUTE_LED_ONLY),
 ```
 
+## Tested On
+
+* Hardware: HP Laptop 15-fd0039nt (SSID: 103c:8bb6)
+* OS: Debian Linux
+* Kernel Version: 6.12.101
+
 ## License
-GPL v2 (same as the Linux kernel).
+
+GPL-2.0 (same as the Linux kernel).
