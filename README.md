@@ -20,10 +20,8 @@ static void alc236_fixup_hp_micmute_led_only(struct hda_codec *codec,
 {
 	struct alc_spec *spec = codec->spec;
 
-	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
-		/* Micmute LED = GPIO 0 */
+	if (action == HDA_FIXUP_ACT_PRE_PROBE)
 		spec->micmute_led_polarity = 1;
-	}
 	alc_fixup_hp_gpio_led(codec, action, 0x00, 0x01);
 }
 ```
