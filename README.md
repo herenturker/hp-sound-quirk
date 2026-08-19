@@ -44,7 +44,7 @@ SND_PCI_QUIRK(0x103c, 0x8bb6, "HP Laptop 15-fd0039nt", ALC236_FIXUP_HP_MICMUTE_L
 
 * Hardware: HP Laptop 15-fd0039nt (SSID: 103c:8bb6)
 * OS: Debian Linux
-* Kernel Version: 6.12.101
+* Kernel Versions (Patch Tested On): 6.12.101 and 7.2.0
 
 ## License
 
