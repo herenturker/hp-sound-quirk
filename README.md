@@ -2,7 +2,7 @@
 
 This repository provides an out-of-tree Linux kernel module patch that fixes the microphone mute LED functionality on the HP Laptop 15-fd0039nt (and potentially other 15-fd0xxx models) using the Realtek ALC236 audio codec.
 
-The patch is officially applied. [Link for archived e-mail](https://lore.kernel.org/alsa-devel/87ik55maq0.wl-tiwai@suse.de/T/#u)
+The patch is officially applied (upcoming in Linux Kernel 7.3). [Link for archived e-mail](https://lore.kernel.org/alsa-devel/87ik55maq0.wl-tiwai@suse.de/T/#u)
 
 ## Overview
 
