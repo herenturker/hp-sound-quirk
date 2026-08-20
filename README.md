@@ -2,15 +2,16 @@
 
 This repository provides an out-of-tree Linux kernel module patch that fixes the microphone mute LED functionality on the HP Laptop 15-fd0039nt (and potentially other 15-fd0xxx models) using the Realtek ALC236 audio codec.
 
+The patch is officially applied. [Link for archived e-mail](https://lore.kernel.org/alsa-devel/87ik55maq0.wl-tiwai@suse.de/T/#u)
+
 ## Overview
 
-On HP Laptop 15-fd0xxx series laptops running Linux, the microphone mute LED does not toggle correctly by default due to a missing subsystem quirk entry in the kernel's Realtek driver.
+On HP Laptop 15-fd0xxx series laptops (with 8BB6 motherboard and Realtek ALC236 sound driver) running Linux, the microphone mute LED does not toggle correctly by default due to a missing subsystem quirk entry in the kernel's Realtek driver.
 
 This patch adds a dedicated fixup (```ALC236_FIXUP_HP_MICMUTE_LED_ONLY```) targeting Subsystem ID 103c:8bb6. It routes the mic-mute LED control through GPIO 0 with active-low polarity.
 
 ## Patch Details
 
-* Target File: sound/pci/hda/patch_realtek.c
 * Subsystem ID (SSID): 103c:8bb6
 * Fixup Added: ALC236_FIXUP_HP_MICMUTE_LED_ONLY
 * Codes added (in random placement):
